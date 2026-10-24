@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0b0b1a">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fliperama">
+  <title>Controle · Kart Party</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏁</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0b1a; --ink: #fff; --muted: #9a9ab8; --accent: #ffd400;
+      --gas: #2ecc71; --brake: #e74c3c; --drift: #f5b400; --item: #3d8bff;
+      --font: 'Press Start 2P', ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+    html, body {
+      margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+      font-family: var(--font); overflow: hidden; touch-action: none; overscroll-behavior: none;
+    }
+    body { display: flex; flex-direction: column; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+
+    header {
+      display: flex; align-items: center; gap: 12px; padding: 8px 12px;
+      font-size: 10px; background: #14143a; border-bottom: 3px solid #000;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #888; flex: none; }
+    .dot.on { background: var(--gas); }
+    .dot.off { background: var(--brake); }
+    header .grow { flex: 1; }
+    .hud { display: flex; gap: 14px; align-items: center; }
+    .hud .pos { color: var(--accent); font-size: 14px; }
+    .hud .item { font-size: 20px; width: 28px; text-align: center; font-family: serif; }
+    header button {
+      font: inherit; font-size: 8px; color: var(--ink); background: #2a2a5a; border: 2px solid #fff;
+      padding: 6px 8px; border-radius: 4px;
+    }
+    header button.on { background: var(--gas); color: #000; }
+
+    main { flex: 1; display: flex; position: relative; }
+    #stickZone { flex: 1; position: relative; }
+    #stickZone .hint {
+      position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted);
+      font-size: 9px; text-align: center; line-height: 2; pointer-events: none;
+    }
+    .base {
+      position: absolute; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+      border: 4px solid rgba(255,255,255,.35); background: rgba(255,255,255,.06); display: none; pointer-events: none;
+    }
+    .base::before, .base::after {
+      content: '◀'; position: absolute; top: 50%; transform: translateY(-50%); left: 10px; color: rgba(255,255,255,.35); font-size: 14px;
+    }
+    .base::after { content: '▶'; left: auto; right: 10px; }
+    .knob {
+      position: absolute; left: 50%; top: 50%; width: 70px; height: 70px; margin: -35px 0 0 -35px;
+      border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff, #c9c9e0); box-shadow: 0 4px 0 #000;
+    }
+
+    #buttons {
+      flex: 1.15; display: grid; gap: 12px; padding: 14px;
+      grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1.25fr;
+      grid-template-areas: "item drift" "brake gas";
+    }
+    .btn {
+      border: 4px solid #000; border-radius: 18px; color: #000; font: inherit; font-size: clamp(9px, 2.4vw, 14px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 6px 0 rgba(0,0,0,.6), inset 0 -6px 0 rgba(0,0,0,.18); transition: transform .05s;
+    }
+    .btn .big { font-size: clamp(18px, 5vw, 30px); }
+    .btn.down { transform: translateY(5px); box-shadow: 0 1px 0 rgba(0,0,0,.6), inset 0 4px 0 rgba(0,0,0,.2); filter: brightness(1.2); }
+    #bGas { grid-area: gas; background: var(--gas); }
+    #bBrake { grid-area: brake; background: var(--brake); }
+    #bDrift { grid-area: drift; background: var(--drift); }
+    #bItem { grid-area: item; background: var(--item); color: #fff; }
+    #bGas.auto { opacity: .55; }
+
+    .screen {
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 18px; text-align: center; background: rgba(11,11,26,.96); padding: 20px; z-index: 5; line-height: 1.8;
+    }
+    .screen.hidden { display: none; }
+    .screen h1 { margin: 0; color: var(--accent); font-size: clamp(16px, 4vw, 28px); text-shadow: 3px 3px 0 #e53935; }
+    .screen p { margin: 0; font-size: 10px; color: var(--muted); max-width: 520px; }
+    .cta {
+      font: inherit; font-size: clamp(14px, 3.6vw, 22px); padding: 18px 28px; background: var(--gas);
+      color: #000; border: 4px solid #000; border-radius: 14px; box-shadow: 0 6px 0 #000;
+    }
+    .ghost {
+      font: inherit; font-size: 10px; padding: 10px 14px; background: transparent; color: var(--ink);
+      border: 2px solid rgba(255,255,255,.5); border-radius: 10px;
+    }
+    .cta:active { transform: translateY(4px); box-shadow: 0 2px 0 #000; }
+
+    #rotate { display: none; }
+    @media (orientation: portrait) {
+      #rotate { display: flex; z-index: 10; }
+    }
+    .phone-icon { font-size: 54px; animation: rot 1.6s ease-in-out infinite; }
+    @keyframes rot { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="dot" id="dot"></span>
+    <span id="conn">Conectando...</span>
+    <span class="grow"></span>
+    <div class="hud">
+      <span class="pos" id="pos">-</span>
+      <span id="lap">-</span>
+      <span class="item" id="item"></span>
+    </div>
+    <button id="menu">☰ MENU</button>
+    <button id="autoGas">AUTO</button>
+    <button id="fs">⛶</button>
+  </header>
+
+  <main>
+    <div id="stickZone">
+      <div class="hint">Toque e arraste<br>para os lados<br>para virar</div>
+      <div class="base" id="base"><div class="knob" id="knob"></div></div>
+    </div>
+    <div id="buttons">
+      <button class="btn" id="bItem" data-key="item"><span class="big">★</span>ITEM</button>
+      <button class="btn" id="bDrift" data-key="drift"><span class="big">↯</span>DRIFT</button>
+      <button class="btn" id="bBrake" data-key="brake"><span class="big">▼</span>FREIO</button>
+      <button class="btn" id="bGas" data-key="gas"><span class="big">▲</span>ACELERAR</button>
+    </div>
+
+    <!-- Telas sobrepostas -->
+    <div class="screen" id="startScreen">
+      <h1 id="startTitle">CONECTADO!</h1>
+      <p id="startText">Tudo pronto. Quando quiser, comece a corrida.</p>
+      <button class="cta" id="startBtn">▶ INICIAR CORRIDA</button>
+      <button class="ghost" id="menu2">◀ VOLTAR À GALERIA</button>
+      <p>Dica: segure DRIFT numa curva e solte<br>quando as faíscas ficarem laranja = turbo!</p>
+    </div>
+    <div class="screen hidden" id="msgScreen">
+      <h1 id="msgTitle">...</h1>
+      <p id="msgText"></p>
+      <button class="ghost" id="menu3">◀ VOLTAR À GALERIA</button>
+    </div>
+  </main>
+
+  <div class="screen" id="rotate">
+    <div class="phone-icon">📱</div>
+    <h1>GIRE O CELULAR</h1>
+    <p>O controle funciona na horizontal.</p>
+  </div>
+
+  <script src="/shared/config.js"></script>
+  <script src="/shared/arcade-controller.js"></script>
+  <script src="controller.js"></script>
+</body>
+</html>

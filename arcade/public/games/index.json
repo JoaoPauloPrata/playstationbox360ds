@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Kart Party",
+    "tagline": "Corrida de kart estilo Super Nintendo",
+    "description": "Acelere contra 7 pilotos numa pista cheia de curvas. Faça drift para ganhar turbo, pegue caixas de item e use cascos e bananas contra os rivais. 3 voltas!",
+    "genre": "CORRIDA",
+    "players": "1 JOGADOR",
+    "controls": [
+      "Joystick: virar",
+      "Drift: segure na curva e solte p/ turbo",
+      "Item: casco, banana, cogumelo, estrela",
+      "Auto-acelerar opcional"
+    ],
+    "icon": "🏎️",
+    "color": "#e53935",
+    "cover": "cover.svg",
+    "order": 1,
+    "id": "kart"
+  },
+  {
+    "name": "Pancadaria",
+    "tagline": "Luta 2D estilo fliperama",
+    "description": "Escolha entre 6 lutadores e sua bola de energia, gancho voador, agarrão giratório, choque elétrico... Melhor de 3 rounds contra a CPU ou contra um amigo com outro celular!",
+    "genre": "LUTA",
+    "players": "1-2 JOGADORES",
+    "controls": [
+      "Joystick: andar, pular, agachar (trás = defender)",
+      "SOCO e CHUTE: golpes normais",
+      "ESPECIAL (+ ↑ ou ↓): golpes especiais",
+      "SUPER: com a barra cheia"
+    ],
+    "icon": "🥊",
+    "color": "#ff6a00",
+    "cover": "cover.svg",
+    "order": 2,
+    "id": "pancadaria"
+  }
+]

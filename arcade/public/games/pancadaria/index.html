@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pancadaria</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥊</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #08060f; --ink: #fff; --accent: #ffd400; --font: 'Press Start 2P', ui-monospace, monospace; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: var(--font); overflow: hidden; }
+    #wrap { position: fixed; inset: 0; display: grid; place-items: center; }
+    #stage { position: relative; width: min(100vw, calc(100vh * 16 / 9)); aspect-ratio: 16 / 9; }
+    canvas { width: 100%; height: 100%; display: block; }
+    #join {
+      position: absolute; right: 1.6%; bottom: 3%; display: flex; gap: 10px; align-items: center;
+      background: rgba(10, 8, 30, .9); border: 3px solid #fff; box-shadow: 0 0 0 3px #000; padding: 8px;
+      font-size: clamp(6px, .75vw, 10px); line-height: 1.8;
+    }
+    #join.hidden { display: none; }
+    #join img { width: clamp(60px, 7.5vw, 110px); background: #fff; padding: 3px; image-rendering: pixelated; display: block; }
+    #join b { color: #3b9bff; }
+    #join .code { color: var(--accent); font-size: 1.3em; letter-spacing: 3px; }
+    #toast {
+      position: absolute; top: 14%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.8);
+      border: 2px solid #fff; padding: 10px 14px; font-size: clamp(7px, .9vw, 11px); opacity: 0; transition: opacity .3s;
+      pointer-events: none; white-space: nowrap;
+    }
+    #toast.show { opacity: 1; }
+    #soundHint {
+      position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); font-size: 9px; background: rgba(0,0,0,.7);
+      padding: 7px 10px; cursor: pointer;
+    }
+    #soundHint.hidden { display: none; }
+    #help { position: absolute; left: 1.2%; bottom: 1%; font-size: clamp(5px, .55vw, 8px); color: rgba(255,255,255,.45); line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <div id="stage">
+      <canvas id="game"></canvas>
+      <div id="join" class="hidden">
+        <img id="joinQr" alt="QR code">
+        <div><b>P2</b>: escaneie<br>para lutar contra<br>um amigo!<br><span class="code" id="joinCode">----</span></div>
+      </div>
+      <div id="toast"></div>
+      <div id="soundHint">🔊 Clique para ativar o som</div>
+    </div>
+  </div>
+  <script src="/shared/config.js"></script>
+  <script src="/shared/arcade-screen.js"></script>
+  <script src="chars.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

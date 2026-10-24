@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#08060f">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fliperama">
+  <title>Controle · Pancadaria</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥊</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #08060f; --ink: #fff; --muted: #a9a3d6; --accent: #ffd400; --me: #e53935;
+      --p: #ff5252; --k: #ffb300; --s: #29b6f6; --su: #ab47bc;
+      --pixel: 'Press Start 2P', ui-monospace, monospace; --body: 'VT323', ui-monospace, monospace;
+    }
+    [hidden] { display: none !important; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+    html, body { margin: 0; height: 100%; overflow: hidden; touch-action: none; overscroll-behavior: none; }
+    body {
+      background: radial-gradient(ellipse at 50% 0%, #2a0f3a, var(--bg) 70%); color: var(--ink); font-family: var(--pixel);
+      display: flex; flex-direction: column;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    header { display: flex; align-items: center; gap: 10px; padding: 7px 12px; font-size: 9px; background: rgba(0,0,0,.45); border-bottom: 3px solid #000; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #888; flex: none; }
+    .dot.ok { background: #2ecc71; } .dot.wait { background: var(--accent); } .dot.error { background: #e74c3c; }
+    .badge { padding: 5px 7px; border: 2px solid #000; color: #000; background: var(--me); }
+    .grow { flex: 1; }
+    .bars { display: flex; flex-direction: column; gap: 3px; width: 120px; }
+    .bar { height: 7px; background: #3a0d0d; border: 2px solid #000; }
+    .bar i { display: block; height: 100%; background: #ffd400; width: 100%; transition: width .2s; }
+    .bar.m { background: #10203a; } .bar.m i { background: #2f7bff; }
+    .bar.m.full i { background: #4dd2ff; animation: blink .4s steps(2) infinite; }
+    header button { font: inherit; font-size: 8px; color: #fff; background: #2a2050; border: 2px solid #fff; padding: 6px 8px; border-radius: 4px; }
+    @keyframes blink { 50% { opacity: .35; } }
+
+    main { flex: 1; position: relative; display: flex; }
+    #stickZone { flex: 1; position: relative; }
+    #stickZone .hint { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--muted); font-size: 8px; line-height: 2.2; pointer-events: none; }
+    .base { position: absolute; width: 160px; height: 160px; margin: -80px 0 0 -80px; border-radius: 50%; border: 4px solid rgba(255,255,255,.3); background: rgba(255,255,255,.05); display: none; pointer-events: none; }
+    .base span { position: absolute; color: rgba(255,255,255,.35); font-size: 12px; }
+    .base .u { top: 6px; left: 50%; transform: translateX(-50%); } .base .d { bottom: 6px; left: 50%; transform: translateX(-50%); }
+    .base .l { left: 8px; top: 50%; transform: translateY(-50%); } .base .r { right: 8px; top: 50%; transform: translateY(-50%); }
+    .base span.on { color: var(--accent); }
+    .knob { position: absolute; left: 50%; top: 50%; width: 66px; height: 66px; margin: -33px 0 0 -33px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff, #bdb6e6); box-shadow: 0 4px 0 #000; }
+
+    #buttons { flex: 1.1; display: grid; gap: 12px; padding: 12px 14px 14px; grid-template-columns: 1fr 1fr; grid-template-rows: .7fr 1fr 1fr;
+      grid-template-areas: "su s" "p k" "p k"; }
+    .btn { border: 4px solid #000; border-radius: 50%; font: inherit; font-size: clamp(8px, 2.2vw, 12px); color: #000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      box-shadow: 0 6px 0 rgba(0,0,0,.65), inset 0 -6px 0 rgba(0,0,0,.2); aspect-ratio: auto; }
+    .btn .ic { font-size: clamp(16px, 4.5vw, 26px); }
+    .btn.down { transform: translateY(5px); box-shadow: 0 1px 0 rgba(0,0,0,.6), inset 0 4px 0 rgba(0,0,0,.2); filter: brightness(1.25); }
+    #bP { grid-area: p; background: var(--p); }
+    #bK { grid-area: k; background: var(--k); }
+    #bS { grid-area: s; background: var(--s); border-radius: 16px; }
+    #bSu { grid-area: su; background: #3a2a4a; color: #777; border-radius: 16px; }
+    #bSu.ready { background: var(--su); color: #fff; animation: pulse .6s ease-in-out infinite alternate; }
+    @keyframes pulse { to { box-shadow: 0 6px 0 rgba(0,0,0,.65), 0 0 24px 6px rgba(171,71,188,.8); } }
+
+    .screen { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+      background: rgba(8,6,15,.97); padding: 12px 16px; text-align: center; }
+    .screen.hidden { display: none; }
+    .screen h1 { margin: 0; font-size: clamp(13px, 3.2vw, 22px); color: var(--accent); text-shadow: 3px 3px 0 #b8417a; line-height: 1.5; }
+    .screen p { margin: 0; font-family: var(--body); font-size: 20px; color: var(--muted); }
+    .roster { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: min(100%, 640px); }
+    .char { font: inherit; font-size: 9px; color: #fff; border: 3px solid #000; border-radius: 10px; padding: 10px 6px; line-height: 1.6;
+      box-shadow: 0 4px 0 #000; text-shadow: 2px 2px 0 #000; }
+    .char small { display: block; font-family: var(--body); font-size: 16px; opacity: .9; text-shadow: none; }
+    .char.sel { outline: 4px solid var(--accent); outline-offset: 2px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .cta { font: inherit; font-size: clamp(11px, 2.6vw, 15px); padding: 14px 20px; background: #2ecc71; color: #000; border: 4px solid #000; border-radius: 12px; box-shadow: 0 5px 0 #000; }
+    .cta.alt { background: var(--accent); } .cta.ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.5); box-shadow: none; font-size: 10px; }
+    .cta:active { transform: translateY(3px); box-shadow: 0 2px 0 #000; }
+    .moves { font-family: var(--body); font-size: 18px; color: #bfe7ff; line-height: 1.15; }
+
+    #rotate { display: none; }
+    @media (orientation: portrait) { #rotate { display: flex; z-index: 20; } }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="dot wait" id="dot"></span>
+    <span id="status">Conectando...</span>
+    <span class="badge" id="badge" hidden>P1</span>
+    <span id="cname"></span>
+    <span class="grow"></span>
+    <div class="bars" id="bars" hidden>
+      <div class="bar"><i id="hp"></i></div>
+      <div class="bar m" id="mbar"><i id="meter"></i></div>
+    </div>
+    <button id="menu">☰ MENU</button>
+  </header>
+
+  <main>
+    <div id="stickZone">
+      <div class="hint">Toque e arraste<br>← → andar · ← defender<br>↑ pular · ↓ agachar</div>
+      <div class="base" id="base">
+        <span class="u">▲</span><span class="d">▼</span><span class="l">◀</span><span class="r">▶</span>
+        <div class="knob" id="knob"></div>
+      </div>
+    </div>
+    <div id="buttons">
+      <button class="btn" id="bSu" data-b="su"><span class="ic">✸</span>SUPER</button>
+      <button class="btn" id="bS" data-b="s"><span class="ic">✦</span>ESPECIAL</button>
+      <button class="btn" id="bP" data-b="p"><span class="ic">👊</span>SOCO</button>
+      <button class="btn" id="bK" data-b="k"><span class="ic">🦵</span>CHUTE</button>
+    </div>
+
+    <!-- seleção de lutador -->
+    <div class="screen hidden" id="selScreen">
+      <h1>ESCOLHA SEU LUTADOR</h1>
+      <div class="roster" id="roster"></div>
+      <div class="moves" id="selMoves"></div>
+      <div class="row">
+        <button class="cta" id="lockBtn">✔ CONFIRMAR</button>
+        <button class="cta ghost" id="unlockBtn" hidden>TROCAR</button>
+      </div>
+    </div>
+
+    <!-- fim da partida -->
+    <div class="screen hidden" id="resScreen">
+      <h1 id="resTitle">FIM DE LUTA</h1>
+      <div class="row">
+        <button class="cta" id="rematchBtn">↻ REVANCHE</button>
+        <button class="cta alt" id="reselectBtn">TROCAR LUTADOR</button>
+      </div>
+      <button class="cta ghost" id="menu2">◀ VOLTAR À GALERIA</button>
+    </div>
+
+    <!-- mensagens -->
+    <div class="screen hidden" id="msgScreen">
+      <h1 id="msgTitle"></h1>
+      <p id="msgText"></p>
+      <button class="cta ghost" id="menu3">◀ VOLTAR À GALERIA</button>
+    </div>
+  </main>
+
+  <div class="screen" id="rotate">
+    <div style="font-size:50px">📱</div>
+    <h1>GIRE O CELULAR</h1>
+    <p>O controle funciona na horizontal.</p>
+  </div>
+
+  <script src="/shared/config.js"></script>
+  <script src="/shared/arcade-controller.js"></script>
+  <script src="controller.js"></script>
+</body>
+</html>

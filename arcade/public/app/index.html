@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0820">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fliperama">
+  <title>Fliperama · Controle</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0820; --bg2: #1d1250; --ink: #fff; --muted: #a9a3d6; --accent: #ffd400; --pink: #ff3d8b; --cyan: #29e0ff; --ok: #2ecc71;
+      --pixel: 'Press Start 2P', ui-monospace, monospace; --body: 'VT323', ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; }
+    body {
+      background:
+        radial-gradient(ellipse at 50% 115%, rgba(255, 61, 139, .35), transparent 60%),
+        linear-gradient(var(--bg2), var(--bg));
+      color: var(--ink); font-family: var(--body);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: calc(env(safe-area-inset-top) + 16px) calc(env(safe-area-inset-right) + 18px) calc(env(safe-area-inset-bottom) + 16px) calc(env(safe-area-inset-left) + 18px);
+      gap: 18px;
+    }
+    .logo { text-align: center; }
+    .logo img { width: 72px; height: 72px; border-radius: 18px; box-shadow: 0 0 0 3px #000, 0 6px 0 3px rgba(0,0,0,.5); }
+    h1 { font-family: var(--pixel); font-size: 22px; margin: 14px 0 6px; color: var(--accent); text-shadow: 3px 3px 0 var(--pink), 5px 5px 0 #000; letter-spacing: 2px; }
+    .sub { font-family: var(--pixel); font-size: 8px; color: var(--cyan); letter-spacing: 2px; }
+
+    .card { width: min(100%, 420px); display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .scan {
+      width: 100%; font: 15px var(--pixel); color: #000; background: var(--ok); border: 4px solid #000; border-radius: 16px;
+      padding: 22px 14px; box-shadow: 0 7px 0 #000, inset 0 -7px 0 rgba(0,0,0,.18); display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .scan span { font-size: 28px; }
+    .scan:active { transform: translateY(5px); box-shadow: 0 2px 0 #000; }
+    .scan:disabled { background: #3a3560; color: #888; box-shadow: 0 7px 0 #000; }
+    .or { font-size: 20px; color: var(--muted); }
+    .code-row { display: flex; gap: 10px; width: 100%; }
+    .code-row input {
+      flex: 1; min-width: 0; font: 22px var(--pixel); text-align: center; letter-spacing: 10px; text-transform: uppercase;
+      padding: 14px 8px; border: 4px solid #000; border-radius: 12px; background: #fff; color: #000; outline: none;
+      box-shadow: inset 0 4px 0 rgba(0,0,0,.12);
+    }
+    .code-row input:focus { box-shadow: 0 0 0 3px var(--accent); }
+    .code-row button {
+      font: 12px var(--pixel); padding: 0 16px; background: var(--accent); color: #000; border: 4px solid #000; border-radius: 12px; box-shadow: 0 5px 0 #000;
+    }
+    .code-row button:active { transform: translateY(3px); box-shadow: 0 2px 0 #000; }
+    .last {
+      font: 10px var(--pixel); color: #fff; background: transparent; border: 2px dashed rgba(255,255,255,.5); border-radius: 10px; padding: 12px 14px;
+    }
+    .msg { min-height: 22px; font-size: 21px; text-align: center; color: var(--muted); }
+    .msg.err { color: #ff6b6b; } .msg.ok { color: var(--ok); }
+
+    .install {
+      width: min(100%, 420px); background: rgba(0,0,0,.35); border: 2px solid rgba(255,255,255,.25); border-radius: 12px;
+      padding: 12px 14px; font-size: 19px; line-height: 1.2; color: #e8e6ff; text-align: center;
+    }
+    .install b { color: var(--accent); font-weight: normal; }
+    .install button { margin-top: 8px; font: 11px var(--pixel); padding: 12px 16px; background: var(--cyan); color: #000; border: 3px solid #000; border-radius: 10px; box-shadow: 0 4px 0 #000; }
+    .hidden { display: none !important; }
+
+    /* ---------- leitor ---------- */
+    #scanner { position: fixed; inset: 0; z-index: 10; background: #000; display: flex; align-items: center; justify-content: center; }
+    #scanner video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .frame {
+      position: relative; width: min(68vw, 68vh); aspect-ratio: 1; border-radius: 18px;
+      box-shadow: 0 0 0 100vmax rgba(0,0,0,.55);
+    }
+    .frame { border: 5px solid var(--accent); }
+    .laser { position: absolute; left: 8%; right: 8%; height: 3px; background: var(--pink); box-shadow: 0 0 12px var(--pink); animation: laser 1.8s ease-in-out infinite alternate; }
+    @keyframes laser { from { top: 8%; } to { top: 92%; } }
+    .scan-ui { position: absolute; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom) + 28px); display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .scan-ui p { margin: 0; font: 11px var(--pixel); text-shadow: 2px 2px 0 #000; line-height: 1.6; text-align: center; padding: 0 20px; }
+    .scan-ui button { font: 11px var(--pixel); padding: 12px 18px; background: #fff; color: #000; border: 3px solid #000; border-radius: 10px; }
+    #scanner canvas { display: none; }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <img src="/icons/icon-192.png" alt="">
+    <h1>FLIPERAMA</h1>
+    <div class="sub">CONTROLE</div>
+  </div>
+
+  <div class="card">
+    <button class="scan" id="scanBtn"><span>📷</span>ESCANEAR QR CODE</button>
+    <div class="or">ou digite o código que aparece na tela</div>
+    <form class="code-row" id="codeForm" autocomplete="off">
+      <input id="code" maxlength="4" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="ABCD" aria-label="Código da sala">
+      <button type="submit">ENTRAR</button>
+    </form>
+    <button class="last hidden" id="lastBtn"></button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="install hidden" id="install"></div>
+
+  <div id="scanner" class="hidden">
+    <video id="video" playsinline muted></video>
+    <div class="frame"><div class="laser"></div></div>
+    <div class="scan-ui">
+      <p>Aponte para o QR code<br>que aparece na TV</p>
+      <button id="cancelScan">CANCELAR</button>
+    </div>
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <script src="/shared/config.js"></script>
+  <script src="/shared/arcade-controller.js"></script>
+  <script>
+  'use strict';
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    ArcadeController.setupPage();
+    const API = (window.ARCADE_CONFIG && window.ARCADE_CONFIG.server) || '';
+
+    const msg = (text, kind = '') => { $('msg').textContent = text; $('msg').className = 'msg ' + kind; };
+    const vibrate = (p) => { try { navigator.vibrate && navigator.vibrate(p); } catch { /* ok */ } };
+
+    // ------------------------------ ENTRAR ------------------------------
+    async function join(code) {
+      code = String(code || '').trim().toUpperCase();
+      if (!/^[A-Z0-9]{4}$/.test(code)) { msg('O código tem 4 letras/números.', 'err'); return; }
+      msg('Procurando a sala...');
+      try {
+        const r = await (await fetch(`${API}/api/rooms/${code}`, { cache: 'no-store' })).json();
+        if (!r.exists) { msg(`Sala ${code} não encontrada. Confira o código na TV.`, 'err'); vibrate([60, 60, 60]); return; }
+      } catch {
+        msg('Sem conexão com o servidor. O PC está ligado e no mesmo Wi-Fi?', 'err');
+        return;
+      }
+      vibrate(50);
+      msg('Conectando!', 'ok');
+      location.href = `/controller.html?room=${code}`;
+    }
+
+    function codeFromText(text) {
+      text = String(text || '').trim();
+      try {
+        const u = new URL(text);
+        const c = u.searchParams.get('room');
+        if (c) return c;
+      } catch { /* não é um link */ }
+      return /^[A-Z0-9]{4}$/i.test(text) ? text : null;
+    }
+
+    $('codeForm').addEventListener('submit', (e) => { e.preventDefault(); $('code').blur(); join($('code').value); });
+    $('code').addEventListener('input', () => {
+      $('code').value = $('code').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if ($('code').value.length === 4) { $('code').blur(); join($('code').value); }
+    });
+
+    // Link direto (/app/?room=ABCD) entra sozinho
+    const direct = new URLSearchParams(location.search).get('room');
+    if (direct) join(direct);
+
+    // Última sala usada
+    (async () => {
+      let last = null;
+      try { last = localStorage.getItem('arcade.lastRoom'); } catch { /* ok */ }
+      if (!last || direct) return;
+      try {
+        const r = await (await fetch(`${API}/api/rooms/${last}`, { cache: 'no-store' })).json();
+        if (!r.exists) return;
+        $('lastBtn').textContent = `↻ VOLTAR PARA A SALA ${last}`;
+        $('lastBtn').classList.remove('hidden');
+        $('lastBtn').onclick = () => join(last);
+      } catch { /* servidor fora do ar */ }
+    })();
+
+    // ------------------------------ LEITOR ------------------------------
+    let stream = null, scanning = false, detector = null;
+    const canScan = isSecureContext && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+    if (!canScan) {
+      $('scanBtn').disabled = true;
+      $('scanBtn').innerHTML = '<span>📷</span>CÂMERA INDISPONÍVEL';
+      msg('A câmera só funciona com o servidor em HTTPS. Digite o código da tela.');
+    }
+
+    function loadJsQR() {
+      if (window.jsQR) return Promise.resolve();
+      return new Promise((ok, fail) => {
+        const s = document.createElement('script');
+        s.src = '/vendor/jsQR.js'; s.onload = ok; s.onerror = fail;
+        document.head.appendChild(s);
+      });
+    }
+
+    async function startScan() {
+      msg('');
+      try {
+        if ('BarcodeDetector' in window) {
+          const formats = await BarcodeDetector.getSupportedFormats().catch(() => []);
+          if (formats.includes('qr_code')) detector = new BarcodeDetector({ formats: ['qr_code'] });
+        }
+        if (!detector) await loadJsQR();
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } }, audio: false });
+      } catch (e) {
+        msg(e && e.name === 'NotAllowedError' ? 'Permita o uso da câmera para escanear.' : 'Não foi possível abrir a câmera.', 'err');
+        return;
+      }
+      const v = $('video');
+      v.srcObject = stream;
+      await v.play().catch(() => {});
+      $('scanner').classList.remove('hidden');
+      scanning = true;
+      tick();
+    }
+
+    function stopScan() {
+      scanning = false;
+      $('scanner').classList.add('hidden');
+      if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
+    }
+
+    let warned = 0;
+    async function tick() {
+      if (!scanning) return;
+      const v = $('video');
+      let text = null;
+      if (v.readyState >= 2) {
+        try {
+          if (detector) {
+            const codes = await detector.detect(v);
+            if (codes.length) text = codes[0].rawValue;
+          } else {
+            const c = $('canvas'), w = 640, h = Math.round(640 * v.videoHeight / v.videoWidth) || 480;
+            c.width = w; c.height = h;
+            const ctx = c.getContext('2d', { willReadFrequently: true });
+            ctx.drawImage(v, 0, 0, w, h);
+            const r = window.jsQR(ctx.getImageData(0, 0, w, h).data, w, h, { inversionAttempts: 'dontInvert' });
+            if (r) text = r.data;
+          }
+        } catch { /* quadro inválido */ }
+      }
+      if (text) {
+        const code = codeFromText(text);
+        if (code) { stopScan(); join(code); return; }
+        if (Date.now() - warned > 2500) { warned = Date.now(); msg('Esse QR code não é do Fliperama.', 'err'); vibrate(80); }
+      }
+      setTimeout(tick, 120);
+    }
+
+    $('scanBtn').addEventListener('click', startScan);
+    $('cancelScan').addEventListener('click', stopScan);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stopScan(); });
+
+    // ----------------------------- INSTALAR -----------------------------
+    function renderInstall() {
+      const box = $('install');
+      if (ArcadeController.isStandalone()) { box.classList.add('hidden'); return; }
+      box.classList.remove('hidden');
+      if (!isSecureContext) {
+        box.innerHTML = 'Para <b>instalar o app</b> e usar a câmera, o servidor precisa estar em <b>HTTPS</b>. Por enquanto, use pelo navegador mesmo.';
+      } else if (ArcadeController.canInstall()) {
+        box.innerHTML = 'Instale o controle na tela inicial: abre em <b>tela cheia</b>, sem barra do navegador.<br><button id="installBtn">📲 INSTALAR APP</button>';
+        $('installBtn').onclick = async () => { if (await ArcadeController.install()) box.classList.add('hidden'); };
+      } else if (ArcadeController.isIOS()) {
+        box.innerHTML = 'Para instalar no iPhone: toque em <b>Compartilhar</b> <span style="font-family:sans-serif">⎋</span> e depois em <b>“Adicionar à Tela de Início”</b>.';
+      } else {
+        box.innerHTML = 'Para instalar: abra o menu do navegador <b>⋮</b> e toque em <b>“Instalar app”</b> ou <b>“Adicionar à tela inicial”</b>.';
+      }
+    }
+    addEventListener('arcade-installable', renderInstall);
+    renderInstall();
+  })();
+  </script>
+</body>
+</html>

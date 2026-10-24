@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a1a5e"/>
+      <stop offset="1" stop-color="#0a0820"/>
+    </linearGradient>
+    <linearGradient id="pad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff5ba0"/>
+      <stop offset="1" stop-color="#d81b60"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- grade retrô -->
+  <g stroke="#ff3d8b" stroke-opacity=".35" stroke-width="4">
+    <path d="M0 400 H512 M0 440 H512 M0 480 H512"/>
+    <path d="M256 360 L256 512 M176 360 L96 512 M336 360 L416 512 M96 360 L-64 512 M416 360 L576 512"/>
+  </g>
+  <!-- controle -->
+  <g transform="translate(256 250)">
+    <path d="M-170 -60 Q-170 -110 -120 -110 H120 Q170 -110 170 -60 L190 60 Q200 120 140 120 Q105 120 85 80 L70 50 H-70 L-85 80 Q-105 120 -140 120 Q-200 120 -190 60 Z"
+      fill="url(#pad)" stroke="#000" stroke-width="14" stroke-linejoin="round"/>
+    <!-- direcional -->
+    <g fill="#1a1236">
+      <rect x="-132" y="-52" width="28" height="84" rx="5"/>
+      <rect x="-160" y="-24" width="84" height="28" rx="5"/>
+    </g>
+    <!-- botões -->
+    <circle cx="96" cy="-34" r="20" fill="#ffd400" stroke="#000" stroke-width="6"/>
+    <circle cx="136" cy="2" r="20" fill="#29e0ff" stroke="#000" stroke-width="6"/>
+    <circle cx="56" cy="2" r="20" fill="#3ddc84" stroke="#000" stroke-width="6"/>
+    <circle cx="96" cy="38" r="20" fill="#ffffff" stroke="#000" stroke-width="6"/>
+  </g>
+</svg>

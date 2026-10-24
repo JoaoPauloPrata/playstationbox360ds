@@ -1,0 +1,17 @@
+{
+  "name": "Kart Party",
+  "tagline": "Corrida de kart estilo Super Nintendo",
+  "description": "Acelere contra 7 pilotos numa pista cheia de curvas. Faça drift para ganhar turbo, pegue caixas de item e use cascos e bananas contra os rivais. 3 voltas!",
+  "genre": "CORRIDA",
+  "players": "1 JOGADOR",
+  "controls": [
+    "Joystick: virar",
+    "Drift: segure na curva e solte p/ turbo",
+    "Item: casco, banana, cogumelo, estrela",
+    "Auto-acelerar opcional"
+  ],
+  "icon": "🏎️",
+  "color": "#e53935",
+  "cover": "cover.svg",
+  "order": 1
+}

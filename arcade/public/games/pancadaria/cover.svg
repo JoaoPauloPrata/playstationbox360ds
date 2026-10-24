@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b1b5a"/>
+      <stop offset=".5" stop-color="#b8417a"/>
+      <stop offset=".85" stop-color="#ff8c42"/>
+      <stop offset="1" stop-color="#ffd56b"/>
+    </linearGradient>
+    <radialGradient id="ki">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".4" stop-color="#5fb4ff"/>
+      <stop offset="1" stop-color="#2850ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="boom">
+      <stop offset="0" stop-color="#fff6b0"/>
+      <stop offset="1" stop-color="#ff8c42" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="320" height="200" fill="url(#sky)"/>
+  <circle cx="220" cy="128" r="22" fill="#ffe9a3"/>
+  <path d="M0 140 C20 80 70 70 90 100 C100 118 110 128 125 122 C135 85 165 60 190 70 C215 80 220 125 240 140 Z" fill="#3d2552"/>
+  <rect y="136" width="320" height="16" fill="#2c5d8a"/>
+  <rect y="150" width="320" height="12" fill="#e9cf8e"/>
+  <rect y="160" width="320" height="40" fill="#f2eee3"/>
+  <g fill="none" stroke="#1b1b1b" stroke-width="4">
+    <path d="M0 168 Q20 162 40 168 T80 168 T120 168 T160 168 T200 168 T240 168 T280 168 T320 168"/>
+    <path d="M0 180 Q20 174 40 180 T80 180 T120 180 T160 180 T200 180 T240 180 T280 180 T320 180"/>
+    <path d="M0 192 Q20 186 40 192 T80 192 T120 192 T160 192 T200 192 T240 192 T280 192 T320 192"/>
+  </g>
+  <g stroke="#141018" stroke-linecap="round">
+    <!-- lutador 1 (gi branco) lançando bola de energia -->
+    <g transform="translate(70 0)">
+      <line x1="10" y1="150" x2="2" y2="176" stroke-width="13"/><line x1="10" y1="150" x2="2" y2="176" stroke="#f4f4f4" stroke-width="10"/>
+      <line x1="14" y1="150" x2="30" y2="176" stroke-width="13"/><line x1="14" y1="150" x2="30" y2="176" stroke="#f4f4f4" stroke-width="10"/>
+      <line x1="12" y1="150" x2="20" y2="118" stroke-width="22"/><line x1="12" y1="150" x2="20" y2="118" stroke="#f4f4f4" stroke-width="19"/>
+      <line x1="12" y1="148" x2="13" y2="152" stroke="#1d1d1d" stroke-width="20" stroke-linecap="butt"/>
+      <line x1="20" y1="121" x2="50" y2="121" stroke-width="11"/><line x1="20" y1="121" x2="50" y2="121" stroke="#f1c27d" stroke-width="8"/>
+      <line x1="20" y1="125" x2="48" y2="127" stroke-width="11"/><line x1="20" y1="125" x2="48" y2="127" stroke="#f1c27d" stroke-width="8"/>
+      <circle cx="25" cy="104" r="11" fill="#f1c27d" stroke-width="3"/>
+      <rect x="14" y="98" width="22" height="4" fill="#d62828" stroke="none"/>
+      <path d="M14 100 l-10 3 M14 100 l-8 8" stroke="#d62828" stroke-width="3"/>
+    </g>
+    <!-- lutador 2 (fera verde) -->
+    <g transform="translate(250 0) scale(-1 1)">
+      <line x1="10" y1="150" x2="0" y2="176" stroke-width="15"/><line x1="10" y1="150" x2="0" y2="176" stroke="#4caf50" stroke-width="12"/>
+      <line x1="14" y1="150" x2="28" y2="176" stroke-width="15"/><line x1="14" y1="150" x2="28" y2="176" stroke="#4caf50" stroke-width="12"/>
+      <line x1="10" y1="150" x2="5" y2="160" stroke="#7b4a2a" stroke-width="14"/>
+      <line x1="12" y1="150" x2="16" y2="116" stroke-width="26"/><line x1="12" y1="150" x2="16" y2="116" stroke="#4caf50" stroke-width="23"/>
+      <line x1="18" y1="120" x2="40" y2="108" stroke-width="14"/><line x1="18" y1="120" x2="40" y2="108" stroke="#4caf50" stroke-width="11"/>
+      <polygon points="8,92 14,82 20,90 28,84 30,96 36,98 30,104 10,104" fill="#ff8f00" stroke-width="2"/>
+      <circle cx="22" cy="102" r="11" fill="#4caf50" stroke-width="3"/>
+    </g>
+  </g>
+  <circle cx="160" cy="124" r="26" fill="url(#ki)"/>
+  <circle cx="160" cy="124" r="9" fill="#fff"/>
+  <g stroke="#7fdcff" stroke-width="2" fill="none">
+    <path d="M210 120 l-8 -6 l6 -4 l-10 -8"/><path d="M214 130 l-12 4 l5 5 l-11 6"/>
+  </g>
+  <text x="160" y="40" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="38" fill="#ffd400" stroke="#000" stroke-width="3" paint-order="stroke">PANCADARIA</text>
+</svg>

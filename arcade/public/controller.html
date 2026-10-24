@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0a0820">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Fliperama">
+  <title>Controle · Fliperama</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0820; --bg2: #160f3a; --ink: #fff; --muted: #a9a3d6; --accent: #ffd400; --pink: #ff3d8b; --cyan: #29e0ff;
+      --ok: #2ecc71; --err: #e74c3c; --me: #e53935;
+      --pixel: 'Press Start 2P', ui-monospace, monospace;
+      --body: 'VT323', ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+    html, body { margin: 0; height: 100%; overflow: hidden; touch-action: manipulation; overscroll-behavior: none; }
+    body {
+      background: linear-gradient(var(--bg2), var(--bg)); color: var(--ink); font-family: var(--body);
+      display: flex; flex-direction: column;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(0,0,0,.35); border-bottom: 3px solid #000; font-family: var(--pixel); font-size: 10px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #888; flex: none; }
+    .dot.ok { background: var(--ok); } .dot.wait { background: var(--accent); animation: blink 1s steps(2) infinite; } .dot.error { background: var(--err); }
+    .grow { flex: 1; }
+    .inst { font: 8px var(--pixel); padding: 6px 8px; background: var(--cyan); color: #000; border: 2px solid #000; border-radius: 6px; }
+    [hidden] { display: none !important; }
+    .me { padding: 6px 8px; border: 2px solid #000; color: #000; background: var(--me); }
+    @keyframes blink { 50% { opacity: .25; } }
+
+    main {
+      flex: 1; display: flex; align-items: center; justify-content: space-evenly; gap: 18px; padding: 16px; flex-wrap: wrap;
+    }
+    .now { flex: 1 1 220px; max-width: 360px; text-align: center; }
+    .now .lbl { font-family: var(--pixel); font-size: 9px; color: var(--muted); letter-spacing: 1px; }
+    .now .card {
+      margin: 10px auto; padding: 16px; border: 4px solid #000; box-shadow: 0 0 0 3px var(--accent), 6px 6px 0 3px rgba(0,0,0,.5);
+      background: #333; min-height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    }
+    .now .icon { font-size: 44px; line-height: 1; }
+    .now .name { font-family: var(--pixel); font-size: 13px; text-shadow: 2px 2px 0 #000; line-height: 1.5; }
+    .now .sub { font-size: 20px; color: #fff; opacity: .85; }
+    .dots { display: flex; gap: 6px; justify-content: center; }
+    .dots i { width: 8px; height: 8px; background: rgba(255,255,255,.25); }
+    .dots i.on { background: var(--accent); }
+
+    .dpad { display: grid; grid-template-columns: repeat(3, 64px); grid-template-rows: repeat(3, 64px); gap: 4px; }
+    .dpad button {
+      font: 22px var(--pixel); color: #fff; background: #2b2560; border: 3px solid #000; border-radius: 10px;
+      box-shadow: 0 5px 0 #000; touch-action: manipulation;
+    }
+    .dpad button:active, .dpad button.down { transform: translateY(4px); box-shadow: 0 1px 0 #000; background: #3d3590; }
+    .dpad .u { grid-area: 1 / 2; } .dpad .l { grid-area: 2 / 1; } .dpad .r { grid-area: 2 / 3; } .dpad .d { grid-area: 3 / 2; }
+    .dpad .c { grid-area: 2 / 2; background: #1a163d; box-shadow: none; border-color: #120f2c; }
+
+    .play {
+      font: 16px var(--pixel); color: #000; background: var(--accent); border: 4px solid #000; border-radius: 50%;
+      width: 130px; height: 130px; box-shadow: 0 7px 0 #000, inset 0 -8px 0 rgba(0,0,0,.18);
+    }
+    .play:active { transform: translateY(5px); box-shadow: 0 2px 0 #000; }
+
+    .overlay {
+      position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+      background: rgba(10,8,32,.97); text-align: center; padding: 24px; z-index: 10;
+    }
+    .overlay.hidden { display: none; }
+    .overlay h1 { font-family: var(--pixel); color: var(--accent); font-size: 18px; margin: 0; line-height: 1.5; text-shadow: 3px 3px 0 var(--pink); }
+    .overlay p { font-size: 22px; color: var(--muted); margin: 0; max-width: 420px; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="dot wait" id="dot"></span>
+    <span id="status">Conectando...</span>
+    <span class="grow"></span>
+    <button class="inst" id="instBtn" hidden>📲 INSTALAR</button>
+    <span class="me" id="me" hidden>P1</span>
+  </header>
+
+  <main>
+    <div class="dpad">
+      <button class="u" data-dir="up" aria-label="Cima">▲</button>
+      <button class="l" data-dir="left" aria-label="Esquerda">◀</button>
+      <span class="c"></span>
+      <button class="r" data-dir="right" aria-label="Direita">▶</button>
+      <button class="d" data-dir="down" aria-label="Baixo">▼</button>
+    </div>
+
+    <div class="now">
+      <div class="lbl">JOGO SELECIONADO</div>
+      <div class="card" id="card"><div class="icon">🕹️</div><div class="name">...</div></div>
+      <div class="dots" id="dots"></div>
+    </div>
+
+    <button class="play" id="play">JOGAR</button>
+  </main>
+
+  <div class="overlay hidden" id="overlay">
+    <h1 id="ovTitle"></h1>
+    <p id="ovText"></p>
+  </div>
+
+  <script src="/shared/config.js"></script>
+  <script src="/shared/arcade-controller.js"></script>
+  <script>
+    'use strict';
+    (() => {
+      const $ = (id) => document.getElementById(id);
+      const COLORS = ArcadeController.PLAYER_COLORS;
+
+      const pad = ArcadeController({
+        game: null,
+        onStatus(text, kind) {
+          $('status').textContent = text;
+          $('dot').className = 'dot ' + kind;
+        },
+        onJoined(info) {
+          const me = $('me');
+          me.hidden = false;
+          me.textContent = `P${info.index + 1}`;
+          me.style.background = COLORS[info.index % COLORS.length];
+          pad.vibrate(50);
+        },
+        onError(text) { overlay('OPS!', text); },
+        onMessage(m) {
+          if (m.t === 'hub') renderSel(m);
+          else if (m.t === 'hub-launching') overlay('CARREGANDO', `${m.name}...`);
+        },
+      });
+
+      function renderSel(m) {
+        const g = m.game;
+        if (!g) return;
+        $('card').style.background = `linear-gradient(135deg, ${g.color}, #000)`;
+        $('card').innerHTML = `<div class="icon">${g.icon}</div><div class="name"></div><div class="sub"></div>`;
+        $('card').querySelector('.name').textContent = g.name;
+        $('card').querySelector('.sub').textContent = g.players;
+        $('dots').innerHTML = Array.from({ length: m.total }, (_, i) => `<i class="${i === m.sel ? 'on' : ''}"></i>`).join('');
+      }
+
+      function overlay(title, text) {
+        $('ovTitle').textContent = title;
+        $('ovText').textContent = text;
+        $('overlay').classList.remove('hidden');
+      }
+
+      for (const b of document.querySelectorAll('[data-dir]')) {
+        b.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          pad.send({ t: 'nav', dir: b.dataset.dir });
+          pad.vibrate(10);
+        });
+      }
+      const showInstall = () => { $('instBtn').hidden = !ArcadeController.canInstall(); };
+      addEventListener('arcade-installable', showInstall);
+      showInstall();
+      $('instBtn').addEventListener('click', () => ArcadeController.install().then(showInstall));
+
+      $('play').addEventListener('click', () => {
+        pad.send({ t: 'select' });
+        pad.vibrate(40);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Servidor de salas do Fliperama no Fly.io (região São Paulo).
+# As salas ficam na memória, então o app deve rodar em UMA máquina só:
+#   flyctl deploy --ha=false
+app = "fliperama-arcade"
+primary_region = "gru"
+
+[env]
+  PORT = "8080"
+  # Endereço do front-end (Vercel) que vai no QR code
+  PUBLIC_URL = "https://fliperama.vercel.app"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"   # desliga quando ninguém está jogando (economiza)
+  auto_start_machines = true    # liga sozinho quando alguém abre o jogo
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type = "connections"
+    soft_limit = 500
+    hard_limit = 1000
+
+  [[http_service.checks]]
+    grace_period = "5s"
+    interval = "30s"
+    method = "GET"
+    path = "/healthz"
+    timeout = "5s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

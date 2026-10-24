@@ -1,0 +1,17 @@
+{
+  "name": "Pancadaria",
+  "tagline": "Luta 2D estilo fliperama",
+  "description": "Escolha entre 6 lutadores e sua bola de energia, gancho voador, agarrão giratório, choque elétrico... Melhor de 3 rounds contra a CPU ou contra um amigo com outro celular!",
+  "genre": "LUTA",
+  "players": "1-2 JOGADORES",
+  "controls": [
+    "Joystick: andar, pular, agachar (trás = defender)",
+    "SOCO e CHUTE: golpes normais",
+    "ESPECIAL (+ ↑ ou ↓): golpes especiais",
+    "SUPER: com a barra cheia"
+  ],
+  "icon": "🥊",
+  "color": "#ff6a00",
+  "cover": "cover.svg",
+  "order": 2
+}
