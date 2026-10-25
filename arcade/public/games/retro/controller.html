@@ -130,6 +130,13 @@
       <button class="cta ghost" data-cmd="exit">◀ VOLTAR À GALERIA</button>
     </div>
 
+    <div class="screen hidden" id="benchScreen">
+      <h1 id="benchTitle">VOCÊ ESTÁ NA RESERVA</h1>
+      <p id="benchText"></p>
+      <button class="cta" id="takeSlot" hidden>▶ ENTRAR NA VAGA LIVRE</button>
+      <button class="cta ghost" id="benchMenu">☰ MENU</button>
+    </div>
+
     <div class="screen hidden" id="menuScreen">
       <h1>MENU</h1>
       <div class="grid2">
@@ -139,7 +146,10 @@
         <button class="cta blue" data-cmd="load">📂 CARREGAR</button>
       </div>
       <div class="grid2">
+        <button class="cta alt" data-cmd="qr" id="qrBtn">📱 QR NA TV</button>
         <button class="cta red" data-cmd="exit">◀ GALERIA</button>
+      </div>
+      <div class="grid2" style="grid-template-columns:1fr">
         <button class="cta ghost" id="closeMenu">✕ FECHAR</button>
       </div>
     </div>

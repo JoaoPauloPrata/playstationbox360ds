@@ -16,17 +16,25 @@
     html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink); font-family: var(--pixel); }
     #game { position: fixed; inset: 0; }
 
-    /* faixa de cima: jogadores + código da sala (some sozinha) */
+    /* canto de cima: QR para mais jogadores entrarem + vagas do console */
     #hud {
-      position: fixed; top: 12px; left: 12px; z-index: 30; display: flex; align-items: center; gap: 10px;
-      background: rgba(0,0,0,.75); border: 3px solid #fff; padding: 8px 10px; font-size: 10px;
+      position: fixed; top: 12px; left: 12px; z-index: 50; display: flex; align-items: center; gap: 12px;
+      background: rgba(0,0,0,.82); border: 3px solid #fff; box-shadow: 0 0 0 3px #000; padding: 8px 10px; font-size: 10px;
       transition: opacity .6s; pointer-events: none;
     }
     #hud.dim { opacity: 0; }
+    #hud .qr { display: none; background: #fff; padding: 5px; line-height: 0; }
+    #hud .qr img { width: clamp(110px, 13vw, 170px); height: auto; image-rendering: pixelated; }
+    #hud.open .qr { display: block; }
+    #hud .info { display: flex; flex-direction: column; gap: 8px; }
+    #hud .join { display: none; color: var(--muted); line-height: 1.6; }
+    #hud.open .join { display: block; }
     #hud .code { color: var(--accent); letter-spacing: 3px; }
+    #hud .slots { display: flex; gap: 6px; flex-wrap: wrap; max-width: 300px; }
     .chip { padding: 5px 7px; border: 2px solid #000; color: #000; }
     .chip.off { opacity: .4; }
-
+    .chip.free { background: transparent !important; color: rgba(255,255,255,.55); border: 2px dashed rgba(255,255,255,.5); }
+    .chip.bench { background: #555 !important; color: #ddd; }
     .overlay {
       position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center;
       background: radial-gradient(ellipse at 50% 30%, #1d1550, #050410 70%);
@@ -60,7 +68,14 @@
 <body>
   <div id="game"></div>
 
-  <div id="hud"><span>📱 SALA</span><span class="code" id="code">----</span><span id="chips"></span></div>
+  <div id="hud" class="open">
+    <div class="qr"><img id="qr" alt="QR code para entrar"></div>
+    <div class="info">
+      <div class="join">📱 MAIS JOGADORES?<br>ESCANEIEM O QR</div>
+      <div>SALA <span class="code" id="code">----</span></div>
+      <div class="slots" id="chips"></div>
+    </div>
+  </div>
 
   <div class="overlay" id="ov">
     <div class="panel">

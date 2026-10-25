@@ -178,7 +178,7 @@
     }
     el.innerHTML = players.map((p) =>
       `<span class="chip ${p.connected ? '' : 'off'}" style="background:${COLORS[p.index % COLORS.length]}">P${p.index + 1}</span>`).join('') +
-      `<span>${players.length} conectado${players.length > 1 ? 's' : ''}</span>`;
+      `<span>${players.length} conectado${players.length > 1 ? 's' : ''} · mais jogadores: escaneiem o mesmo QR</span>`;
   }
 
   // ---------------------------- IMPORTAR ROMs ----------------------------

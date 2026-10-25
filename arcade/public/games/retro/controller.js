@@ -9,16 +9,18 @@
   let sysId = null;
   let sys = null;
   let menuOpen = false;
+  let me = null;
 
   const pad = ArcadeController({
     game: 'retro',
     orientation: 'landscape',
     onStatus(text, kind) { $('status').textContent = text; $('dot').className = 'dot ' + kind; },
-    onJoined(me) {
+    onJoined(info) {
+      me = info;
       pad.vibrate(50);
       $('badge').hidden = false;
-      $('badge').textContent = `P${me.index + 1}`;
-      $('badge').style.background = COLORS[me.index % COLORS.length];
+      $('badge').textContent = `P${info.index + 1}`;
+      $('badge').style.background = COLORS[info.index % COLORS.length];
     },
     onMessage(m) {
       if (m.t === 'retro') onState(m);
@@ -32,11 +34,35 @@
     $('gname').textContent = m.name || '';
     $('loadTitle').textContent = m.name ? m.name.toUpperCase() : 'CARREGANDO...';
     $('pauseBtn').textContent = m.paused ? '▶ CONTINUAR' : '⏸ PAUSAR';
+    $('qrBtn').textContent = m.qr ? '📱 ESCONDER QR' : '📱 QR NA TV';
+    bench(m);
     $('loadScreen').classList.toggle('hidden', m.phase !== 'loading');
     $('errScreen').classList.toggle('hidden', m.phase !== 'error');
     if (m.phase === 'error') $('errText').textContent = m.msg || 'Não deu para abrir a ROM.';
     if (m.phase !== 'playing') releaseAll();
   }
+
+  // Passou do limite de jogadores do console: fica na reserva até abrir uma vaga
+  let benched = false;
+  function bench(m) {
+    benched = !!(me && m.max && me.index >= m.max && m.phase === 'playing');
+    $('benchScreen').classList.toggle('hidden', !benched || menuOpen);
+    if (!benched) return;
+    releaseAll();
+    const used = new Set(m.used || []);
+    let free = false;
+    for (let i = 0; i < m.max; i++) if (!used.has(i)) free = true;
+    $('benchText').textContent = free
+      ? 'Abriu uma vaga! Toque para entrar no jogo.'
+      : `${sys ? sys.name : 'Este console'} aceita até ${m.max} jogador${m.max > 1 ? 'es' : ''}. Você entra quando alguém sair.`;
+    $('takeSlot').hidden = !free;
+  }
+  // Entrar de novo na sala com outra identidade pega a menor vaga livre
+  $('takeSlot').addEventListener('click', () => {
+    try { localStorage.removeItem(`arcade.pid.${pad.room}`); } catch { /* ok */ }
+    location.reload();
+  });
+  $('benchMenu').addEventListener('click', () => showMenu(true));
 
   // ------------------------------ LAYOUT -------------------------------
   function makeBtn(b) {
@@ -193,6 +219,7 @@
     menuOpen = on;
     if (on) releaseAll();
     $('menuScreen').classList.toggle('hidden', !on);
+    $('benchScreen').classList.toggle('hidden', !benched || on);
   }
   $('menu').addEventListener('click', () => showMenu(!menuOpen));
   $('closeMenu').addEventListener('click', () => showMenu(false));

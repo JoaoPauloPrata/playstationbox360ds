@@ -20,9 +20,19 @@
   const arcade = ArcadeScreen({
     game: 'retro',
     autoExit: false, // salva o jogo antes de voltar
-    onRoom(info, players) { $('code').textContent = info.code; renderPlayers(players); },
-    onJoin(p, players) { renderPlayers(players); toast(`📱 Jogador ${p.index + 1} entrou`); },
-    onLeave(p, players) { releaseAll(p.pid, p.index); renderPlayers(players); },
+    onRoom(info, players) {
+      $('code').textContent = info.code;
+      $('qr').src = info.qr;
+      renderPlayers(players);
+    },
+    onJoin(p, players) {
+      renderPlayers(players);
+      const bench = sys && p.index >= maxPlayers();
+      toast(bench ? `📱 Jogador ${p.index + 1} entrou na reserva (${sys.short}: até ${maxPlayers()})` : `📱 Jogador ${p.index + 1} entrou`);
+      showHud('peek', 4000);
+      sendState();
+    },
+    onLeave(p, players) { releaseAll(p.pid, p.index); renderPlayers(players); showHud('peek', 4000); sendState(); },
     onReady(p) { sendState(p.pid); },
     onMessage(m) {
       if (m.t === 'btn') press(m, m.id | 0, Math.max(0, Math.min(1, Number(m.v) || 0)));
@@ -39,6 +49,9 @@
       name: meta ? meta.name : '',
       msg: errorText,
       paused: !!(emu() && emu().paused),
+      max: maxPlayers(),
+      used: lastPlayers.map((p) => p.index), // vagas ocupadas (o celular da reserva vê quando abre uma)
+      qr: hudOpen,
     }, pid);
   }
 
@@ -50,6 +63,7 @@
     if (!meta) return fail('ROM NÃO ENCONTRADA', 'Esta ROM não está importada neste navegador. Volte à galeria e importe de novo.');
     sys = SYSTEMS[meta.system];
     if (!sys) return fail('CONSOLE NÃO SUPORTADO', `Sistema "${meta.system}" desconhecido.`);
+    renderPlayers(); // agora sabemos quantas vagas o console tem
 
     document.title = `${meta.name} · playstationbox360ds`;
     $('ovIc').textContent = sys.icon;
@@ -90,7 +104,7 @@
     phase = 'playing';
     $('ov').classList.add('hidden');
     sendState();
-    hudSoon();
+    showHud('open', 12000); // primeiros segundos: QR à vista para a turma entrar
     checkSound();
   }
 
@@ -111,7 +125,7 @@
 
   // v: 0 = solto, 1 = apertado (no analógico, 0..1 = força)
   function press(m, id, v) {
-    if (m.index >= MAX_PLAYERS || id < 0 || id > 23) return;
+    if (m.index >= maxPlayers() || id < 0 || id > 23) return; // reserva: não controla ninguém
     let set = held.get(m.pid);
     if (!set) held.set(m.pid, (set = new Set()));
     if (v) set.add(id); else set.delete(id);
@@ -133,6 +147,7 @@
     const g = gm();
     const e = emu();
     if (c === 'exit') return exit();
+    if (c === 'qr') return showHud(hudOpen ? 'close' : 'open', 30000);
     if (!g) return;
     try {
       if (c === 'save') {
@@ -177,6 +192,7 @@
   }
   addEventListener('keydown', (e) => {
     if (e.code === 'Escape') { e.preventDefault(); e.stopPropagation(); exit(); }
+    if (e.code === 'KeyQ' && e.ctrlKey) { e.preventDefault(); command('qr', {}); }
   }, true);
 
   // ------------------------------ SOM ----------------------------------
@@ -197,16 +213,45 @@
   }
 
   // ------------------------------ EXTRAS --------------------------------
+  // Vagas do console: P1..Pmax jogam; quem passar disso fica na reserva
+  const maxPlayers = () => Math.min(MAX_PLAYERS, sys ? sys.players : MAX_PLAYERS);
+  let lastPlayers = [];
   function renderPlayers(players) {
-    $('chips').innerHTML = players.map((p) =>
-      `<span class="chip ${p.connected ? '' : 'off'}" style="background:${COLORS[p.index % COLORS.length]}">P${p.index + 1}</span>`).join(' ');
-    hudSoon();
+    lastPlayers = players || lastPlayers;
+    const max = maxPlayers();
+    const by = new Map(lastPlayers.map((p) => [p.index, p]));
+    const top = Math.max(max, ...lastPlayers.map((p) => p.index + 1));
+    let html = '';
+    for (let i = 0; i < top; i++) {
+      const p = by.get(i);
+      const color = COLORS[i % COLORS.length];
+      if (i >= max) { if (p) html += `<span class="chip bench" title="reserva">P${i + 1} RESERVA</span>`; continue; }
+      html += p
+        ? `<span class="chip ${p.connected ? '' : 'off'}" style="background:${color}">P${i + 1}</span>`
+        : `<span class="chip free">P${i + 1} LIVRE</span>`;
+    }
+    $('chips').innerHTML = html;
   }
+
+  // Canto com QR. mode: 'open' (com QR), 'close' (esconde) ou 'peek' (mostra como está).
+  // Durante o jogo ele some sozinho depois de `ms`.
+  let hudOpen = true;
   let hudT = 0;
-  function hudSoon() {
-    $('hud').classList.remove('dim');
+  function showHud(mode, ms) {
+    const was = hudOpen;
+    if (mode === 'open') hudOpen = true;
+    if (mode === 'close') hudOpen = false;
+    const hud = $('hud');
+    hud.classList.toggle('open', hudOpen);
+    hud.classList.toggle('dim', mode === 'close');
     clearTimeout(hudT);
-    if (phase === 'playing') hudT = setTimeout(() => $('hud').classList.add('dim'), 5000);
+    if (phase === 'playing' && mode !== 'close') {
+      hudT = setTimeout(() => {
+        hud.classList.add('dim');
+        if (hudOpen) { hudOpen = false; sendState(); }
+      }, ms);
+    }
+    if (was !== hudOpen) sendState();
   }
 
   let toastT = 0;

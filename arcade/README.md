@@ -168,7 +168,9 @@ Na galeria, clique em **+ IMPORTAR ROM** ou **arraste os arquivos** para a tela 
 - O console é detectado pela extensão. `.zip` com uma ROM de console dentro usa aquele console; os outros são fliperama. `.bin` grande vira PS1 e pequeno vira Mega Drive. Se errar, troque em **CONSOLE** no painel de detalhes.
 - **As ROMs ficam guardadas só no navegador do PC/TV** (IndexedDB). Nada é enviado para o servidor, nem na Vercel. Outro PC ou outro navegador precisa importar de novo.
 - O emulador é o [EmulatorJS](https://emulatorjs.org), baixado de `cdn.emulatorjs.org` na primeira vez de cada console (precisa de internet).
-- Cada celular é um jogador (P1 a P4). O controle mostra os botões do console da ROM; no N64 o direcional vira analógico.
+- **Vários jogadores:** todos escaneiam o **mesmo QR code** e cada celular vira um jogador (P1, P2...). O controle mostra os botões do console da ROM; no N64 o direcional vira analógico.
+- Na tela do emulador o QR fica no canto nos primeiros segundos e reaparece quando alguém entra ou sai. Para chamar mais gente no meio do jogo: **☰ MENU → 📱 QR NA TV** no celular (ou `Ctrl+Q` no PC).
+- Cada console tem um limite de jogadores (NES/SNES/Mega Drive/PS1: 2, N64: 4, portáteis: 1). Quem passar disso fica na **reserva**, e o celular mostra **ENTRAR NA VAGA LIVRE** quando alguém sai.
 - **☰ MENU** no celular: pausar, reiniciar, salvar/carregar o jogo (1 slot por ROM) e voltar à galeria. Os saves de bateria do próprio jogo são gravados sozinhos.
 - Ao voltar para a galeria, a última imagem do jogo vira a capa do card. `ESC` no PC também volta.
 - Os navegadores só liberam o **som** depois de um clique ou tecla na página: clique uma vez na TV quando aparecer o aviso.
