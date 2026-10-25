@@ -1,5 +1,5 @@
 'use strict';
-// Controle do Kart Party: joystick + botões, enviados pelo SDK do Fliperama
+// Controle do Kart Party: joystick + botões, enviados pelo SDK do playstationbox360ds
 (() => {
   const $ = (id) => document.getElementById(id);
 

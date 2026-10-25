@@ -1,4 +1,4 @@
-# 🕹️ Fliperama
+# 🕹️ playstationbox360ds
 
 Galeria de jogos que rodam no navegador do PC/TV, controlados pelo **celular** via QR code.
 
@@ -30,6 +30,19 @@ O controle pode ser instalado na tela inicial do celular como um app:
 > O servidor sobe em HTTPS automaticamente se existirem `certs/cert.pem` e `certs/key.pem` (porta 3443),
 > ou aceita um endereço público com `PUBLIC_URL=https://...` (túnel ou nuvem). Sem HTTPS tudo continua
 > funcionando pelo navegador, só sem a instalação e sem a câmera (dá para digitar o código).
+
+## Produção (Vercel + Fly.io)
+
+| Parte | Onde | Endereço |
+|---|---|---|
+| Páginas (galeria, jogos, app do controle) | Vercel, Root Directory `arcade`, preset `Other` | https://playstationbox360ds.vercel.app |
+| Servidor de salas (WebSocket) | Fly.io, app `fliperama-arcade`, região `gru` | https://fliperama-arcade.fly.dev |
+
+- A Vercel publica sozinha a cada push no GitHub. O build (`scripts/build-static.js`) gera `public/games/index.json`.
+- O servidor é atualizado com `flyctl deploy --ha=false`. Ele precisa ficar em **uma máquina só**, porque as salas ficam na memória.
+- `public/shared/config.js` decide o servidor: em `localhost` ou na rede local usa o próprio PC (`npm start`), e fora disso usa o Fly.
+- O QR code aponta para o endereço em `PUBLIC_URL`, no `fly.toml`.
+- A máquina do Fly desliga quando ninguém está jogando. A primeira conexão depois disso leva uns segundos.
 
 ## Jogos
 
@@ -139,6 +152,30 @@ arcade/
 ```
 
 Pronto. O jogo aparece na galeria sem mexer no servidor (basta recarregar a galeria).
+
+## Importar ROMs (emulador)
+
+Na galeria, clique em **+ IMPORTAR ROM** ou **arraste os arquivos** para a tela do PC/TV. Cada ROM vira um card e é jogada com o celular igual aos outros jogos.
+
+| Console | Arquivos |
+|---|---|
+| NES · SNES · N64 | `.nes` `.fds` · `.sfc` `.smc` · `.n64` `.z64` `.v64` |
+| Game Boy · Color · Advance · DS | `.gb` · `.gbc` · `.gba` · `.nds` |
+| Mega Drive · Master System · Game Gear | `.md` `.gen` `.smd` `.bin` · `.sms` · `.gg` |
+| PlayStation | `.cue` `.chd` `.pbp` `.bin` `.iso` (ou `.zip` com o .bin + .cue) |
+| Fliperama (FBNeo) · PC Engine · Atari 2600/7800 | `.zip` `.7z` · `.pce` · `.a26` · `.a78` |
+
+- O console é detectado pela extensão. `.zip` com uma ROM de console dentro usa aquele console; os outros são fliperama. `.bin` grande vira PS1 e pequeno vira Mega Drive. Se errar, troque em **CONSOLE** no painel de detalhes.
+- **As ROMs ficam guardadas só no navegador do PC/TV** (IndexedDB). Nada é enviado para o servidor, nem na Vercel. Outro PC ou outro navegador precisa importar de novo.
+- O emulador é o [EmulatorJS](https://emulatorjs.org), baixado de `cdn.emulatorjs.org` na primeira vez de cada console (precisa de internet).
+- Cada celular é um jogador (P1 a P4). O controle mostra os botões do console da ROM; no N64 o direcional vira analógico.
+- **☰ MENU** no celular: pausar, reiniciar, salvar/carregar o jogo (1 slot por ROM) e voltar à galeria. Os saves de bateria do próprio jogo são gravados sozinhos.
+- Ao voltar para a galeria, a última imagem do jogo vira a capa do card. `ESC` no PC também volta.
+- Os navegadores só liberam o **som** depois de um clique ou tecla na página: clique uma vez na TV quando aparecer o aviso.
+- PS1 usa a BIOS interna do emulador. Alguns jogos de fliperama (Neo Geo etc.) precisam do zip da BIOS e podem não abrir.
+- Use apenas ROMs de jogos que você tem o direito de usar.
+
+Arquivos: `public/shared/retro-systems.js` (consoles, extensões e botões), `public/shared/rom-library.js` (biblioteca no IndexedDB) e `public/games/retro/` (tela e controle do emulador, escondido da galeria com `"hidden": true` no `game.json`).
 
 ## Problemas comuns
 

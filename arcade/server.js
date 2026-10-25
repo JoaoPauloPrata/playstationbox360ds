@@ -1,4 +1,4 @@
-// Servidor do Fliperama
+// Servidor do playstationbox360ds
 // - Serve a galeria de jogos e cada jogo (public/games/<id>/)
 // - Gerencia "salas": uma tela (TV/PC) + vários controles (celulares)
 // - As salas sobrevivem à troca de página: a tela pode ir da galeria para um jogo
@@ -121,7 +121,7 @@ function handleRequest(req, res) {
 
   if (!HAS_PUBLIC) {
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-    return res.end('Servidor de salas do Fliperama. As páginas ficam no front-end.');
+    return res.end('Servidor de salas do playstationbox360ds. As páginas ficam no front-end.');
   }
 
   if (pathname.endsWith('/')) pathname += 'index.html';
@@ -317,7 +317,7 @@ setInterval(() => {
 server.listen(PORT, '0.0.0.0', () => {
   const games = listGames();
   console.log('');
-  console.log('  🕹️  FLIPERAMA rodando!');
+  console.log('  🕹️  playstationbox360ds rodando!');
   console.log('');
   console.log(`  Abra no PC/TV:      http://localhost:${PORT}`);
   console.log(`  Celular (QR code):  ${PUBLIC_URL}`);

@@ -1,5 +1,5 @@
 {
-  "name": "fliperama",
+  "name": "playstationbox360ds",
   "version": "1.0.0",
   "description": "Galeria de jogos no navegador controlados pelo celular (QR code + WebSocket)",
   "main": "server.js",

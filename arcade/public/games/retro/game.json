@@ -1,0 +1,5 @@
+{
+  "name": "Emulador de ROMs",
+  "description": "Tela do emulador usada pelas ROMs importadas na galeria. Não aparece sozinha na galeria.",
+  "hidden": true
+}

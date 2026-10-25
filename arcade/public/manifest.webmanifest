@@ -1,8 +1,8 @@
 {
   "id": "/app/",
-  "name": "Fliperama · Controle",
-  "short_name": "Fliperama",
-  "description": "Use o celular como controle dos jogos do Fliperama. Escaneie o QR code da tela para conectar.",
+  "name": "playstationbox360ds · Controle",
+  "short_name": "PSBox360DS",
+  "description": "Use o celular como controle dos jogos do playstationbox360ds. Escaneie o QR code da tela para conectar.",
   "lang": "pt-BR",
   "start_url": "/app/",
   "scope": "/",

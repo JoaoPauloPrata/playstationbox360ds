@@ -1,7 +1,7 @@
 // Service worker do app do controle.
 // Estratégia "rede primeiro": sempre pega a versão mais nova do servidor e
 // só usa o cache se a rede falhar (ex.: abrir o app sem o PC ligado).
-const CACHE = 'fliperama-v2';
+const CACHE = 'psbox360ds-v3';
 const SHELL = [
   '/app/',
   '/controller.html',

@@ -1,4 +1,4 @@
-# Servidor de salas do Fliperama no Fly.io (região São Paulo).
+# Servidor de salas do playstationbox360ds no Fly.io (região São Paulo).
 # As salas ficam na memória, então o app deve rodar em UMA máquina só:
 #   flyctl deploy --ha=false
 app = "fliperama-arcade"
@@ -7,7 +7,7 @@ primary_region = "gru"
 [env]
   PORT = "8080"
   # Endereço do front-end (Vercel) que vai no QR code
-  PUBLIC_URL = "https://fliperama.vercel.app"
+  PUBLIC_URL = "https://playstationbox360ds.vercel.app"
 
 [http_service]
   internal_port = 8080

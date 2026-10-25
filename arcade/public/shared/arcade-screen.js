@@ -13,6 +13,7 @@
 //  arcade.send(obj)            -> para todos os celulares
 //  arcade.send(obj, pid)       -> só para um celular
 //  arcade.launch('kart')       -> abre um jogo (celulares vão junto)
+//  arcade.launch('retro', { rom: id }) -> abre uma ROM importada no emulador
 //  arcade.exit()               -> volta para a galeria
 //
 //  Quando um celular manda { t: 'exit' }, a tela volta para a galeria
@@ -99,9 +100,10 @@
       send(obj, pid) {
         if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(pid ? { ...obj, to: pid } : obj));
       },
-      launch(id) {
+      launch(id, extra) { // extra = parâmetros a mais na URL do jogo (ex.: { rom: 'r1abc' })
         leaving = true;
-        location.href = `/games/${encodeURIComponent(id)}/?room=${code}`;
+        const q = new URLSearchParams({ ...(extra || {}), room: code });
+        location.href = `/games/${encodeURIComponent(id)}/?${q}`;
       },
       exit() {
         leaving = true;

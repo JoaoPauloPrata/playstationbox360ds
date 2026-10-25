@@ -1,4 +1,4 @@
-# Servidor de salas (WebSocket) do Fliperama — roda no Fly.io.
+# Servidor de salas (WebSocket) do playstationbox360ds — roda no Fly.io.
 # As páginas (galeria, jogos, app do controle) ficam na Vercel.
 FROM node:22-alpine
 WORKDIR /app

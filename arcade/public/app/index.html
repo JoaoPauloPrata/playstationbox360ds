@@ -7,8 +7,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Fliperama">
-  <title>Fliperama · Controle</title>
+  <meta name="apple-mobile-web-app-title" content="PSBox360DS">
+  <title>playstationbox360ds · Controle</title>
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
@@ -31,18 +31,19 @@
     }
     .logo { text-align: center; }
     .logo img { width: 72px; height: 72px; border-radius: 18px; box-shadow: 0 0 0 3px #000, 0 6px 0 3px rgba(0,0,0,.5); }
-    h1 { font-family: var(--pixel); font-size: 22px; margin: 14px 0 6px; color: var(--accent); text-shadow: 3px 3px 0 var(--pink), 5px 5px 0 #000; letter-spacing: 2px; }
+    h1 { font-family: var(--pixel); font-size: clamp(13px, 4.6vw, 22px); line-height: 1.35; margin: 14px 0 6px; text-shadow: 3px 3px 0 #000; }
+    h1 .w1 { color: var(--accent); } h1 .w2 { color: var(--pink); } h1 .w3 { color: var(--cyan); } h1 .w4 { color: var(--ok); }
     .sub { font-family: var(--pixel); font-size: 8px; color: var(--cyan); letter-spacing: 2px; }
 
     .card { width: min(100%, 420px); display: flex; flex-direction: column; align-items: center; gap: 14px; }
     .scan {
-      width: 100%; font: 15px var(--pixel); color: #000; background: var(--ok); border: 4px solid #000; border-radius: 16px;
+      width: 100%; font: clamp(11px, 3.9vw, 15px) var(--pixel); color: #000; white-space: nowrap; background: var(--ok); border: 4px solid #000; border-radius: 16px;
       padding: 22px 14px; box-shadow: 0 7px 0 #000, inset 0 -7px 0 rgba(0,0,0,.18); display: flex; align-items: center; justify-content: center; gap: 12px;
     }
     .scan span { font-size: 28px; }
     .scan:active { transform: translateY(5px); box-shadow: 0 2px 0 #000; }
     .scan:disabled { background: #3a3560; color: #888; box-shadow: 0 7px 0 #000; }
-    .or { font-size: 20px; color: var(--muted); }
+    .or { font-size: 20px; color: var(--muted); text-align: center; }
     .code-row { display: flex; gap: 10px; width: 100%; }
     .code-row input {
       flex: 1; min-width: 0; font: 22px var(--pixel); text-align: center; letter-spacing: 10px; text-transform: uppercase;
@@ -87,7 +88,7 @@
 <body>
   <div class="logo">
     <img src="/icons/icon-192.png" alt="">
-    <h1>FLIPERAMA</h1>
+    <h1><span class="w1">PLAYSTATION</span><wbr><span class="w2">BOX</span><span class="w3">360</span><span class="w4">DS</span></h1>
     <div class="sub">CONTROLE</div>
   </div>
 
@@ -245,7 +246,7 @@
       if (text) {
         const code = codeFromText(text);
         if (code) { stopScan(); join(code); return; }
-        if (Date.now() - warned > 2500) { warned = Date.now(); msg('Esse QR code não é do Fliperama.', 'err'); vibrate(80); }
+        if (Date.now() - warned > 2500) { warned = Date.now(); msg('Esse QR code não é do playstationbox360ds.', 'err'); vibrate(80); }
       }
       setTimeout(tick, 120);
     }

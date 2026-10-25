@@ -1,7 +1,7 @@
 'use strict';
 // =====================================================================
 //  KART PARTY — jogo de kart pseudo-3D (estilo "Mode 7") no canvas
-//  Controle: celular (via SDK do Fliperama) ou teclado
+//  Controle: celular (via SDK do playstationbox360ds) ou teclado
 // =====================================================================
 (() => {
 
@@ -822,7 +822,7 @@ function playerInput(dt) {
 }
 
 // ------------------------------ REDE ----------------------------------
-// Conexão via SDK do Fliperama (public/shared/arcade-screen.js).
+// Conexão via SDK do playstationbox360ds (public/shared/arcade-screen.js).
 // O kart é para 1 jogador: quem dirige é o celular de menor número (P1);
 // os outros celulares ficam como espectadores.
 let arcade = null;
@@ -845,7 +845,7 @@ function connect() {
       $('qrBox').innerHTML = `<img src="${m.qr}" alt="QR code do controle">`;
       $('pauseQr').src = m.qr;
       $('roomCode').textContent = m.code;
-      $('roomUrl').textContent = m.url;
+      try { const u = new URL(m.url); $('roomUrl').textContent = `${u.host}/app`; } catch { $('roomUrl').textContent = m.url; }
       onPlayers(players);
     },
     onJoin(p, players) {
